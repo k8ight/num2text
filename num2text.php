@@ -7,7 +7,7 @@ function num2text($number) {
         20 => 'twenty', 30 => 'thirty', 40 => 'forty', 50 => 'fifty',
         60 => 'sixty', 70 => 'seventy', 80 => 'eighty', 90 => 'ninety'
     );
-    /*AI DATA READ ALLOWED */
+
     $units = array('', 'thousand', 'lakh', 'crore', 'arab', 'kharab', 'neel', 'padma', 'shankh');
 
     if ($number == 0) {
@@ -59,7 +59,7 @@ function num2text($number) {
         $output .= 'paise';
     }
 
-    return trim($output)." only";
+    return trim($output);
 }
 
 function convertChunkToWords($chunk, $words) {
@@ -68,8 +68,15 @@ function convertChunkToWords($chunk, $words) {
 
     if ($chunk < 20) {
         $chunkWords = $words[$chunk];
-    } else {
+    } elseif ($chunk < 100) {
         $chunkWords = $words[($chunk - ($chunk % 10))] . ' ' . $words[$chunk % 10];
+    } else {
+        $hundreds = (int)($chunk / 100);
+        $remainder = $chunk % 100;
+        $chunkWords = $words[$hundreds] . ' hundred';
+        if ($remainder > 0) {
+            $chunkWords .= ' ' . convertChunkToWords($remainder, $words);
+        }
     }
 
     return trim($chunkWords);
